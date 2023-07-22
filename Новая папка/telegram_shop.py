@@ -1,20 +1,20 @@
 import types
-from aiogram.types.web_app_info import WebAppInfo
-from aiogram import *
+from telebot import types
+# from aiogram.types.web_app_info import WebAppInfo
+import telebot
 import json
-import sqlite3
 
-bot = Bot("6184823844:AAE7JvBRB4shgFkLd2353I9ihWf4Ggtkr74")
-dp = Dispatcher(bot)
 
-@dp.message_handler(commands=['start'])
-async def start(message:types.Message):
+bot = telebot.TeleBot("6184823844:AAE7JvBRB4shgFkLd2353I9ihWf4Ggtkr74")
+
+@bot.message_handler(commands=['start'])
+def start(message):
     markup = types.ReplyKeyboardMarkup()
-    markup.add(types.KeyboardButton('Форма заказа',web_app=WebAppInfo(url='https://ober1.st8.ru/tg/new/telegram.html')))
-    await message.answer('Привет', reply_markup=markup)
+    markup.add(types.KeyboardButton('Форма заказа',web_app=types.WebAppInfo(url='https://ober1.st8.ru/tg/new/telegram.html')))
+    bot.send_message(message.chat.id, 'Привет', reply_markup=markup)
 
-@dp.message_handler(content_types=['web_app_data'])
-async def web_app(message:types.Message):
+@bot.message_handler(content_types=['web_app_data'])
+def web_app(message):
     res = json.loads(message.web_app_data.data)
     name = res['name']
     email = res['email']
@@ -26,12 +26,14 @@ async def web_app(message:types.Message):
     with open('req.txt', 'a', encoding='utf-8')as file:
         file.write(string)
 
-@dp.message_handler(commands=['test'])
-async def test(message:types.Message):
+bot.message_handler(commands=['test'])
+def test(message):
     res = []
     with open('req.txt', 'r', encoding='utf-8')as file1:
         for i in file1.readlines():
             res.append(i)
     for i in res:
-        await message.answer(i)
-executor.start_polling(dp)
+        bot.send_message(message.chat.id, i)
+
+
+bot.polling(none_stop=True)
