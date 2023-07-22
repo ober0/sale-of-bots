@@ -19,7 +19,8 @@ async def web_app(message:types.Message):
     email = res['email']
     text = res['text']
     tg = res['telegram_id']
-    print(name,email,tg,text)
+    time = res['time']
+    print(name,email,tg,text, time)
 
 
 
